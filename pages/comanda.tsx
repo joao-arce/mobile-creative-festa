@@ -44,7 +44,7 @@ const Comanda = () => {
 
   const buildOpenOrder = () => {
     return (
-      <div className="p-2 w-full bg-gray-100 rounded-md ">
+      <div className="p-2 my-1 h-screen w-full bg-gray-100 rounded-md ">
         <div>
           <h2 className="text-gray-900 title-font font-medium text-center mb-4">
             Pedidos Abertos

@@ -44,7 +44,7 @@ const Comanda = () => {
 
   const buildOpenOrder = () => {
     return (
-      <div className="p-2 my-1 h-screen w-full bg-gray-100 rounded-md ">
+      <div className="p-2 my-1 w-full bg-gray-100 rounded-md ">
         <div>
           <h2 className="text-gray-900 title-font font-medium text-center mb-4">
             Pedidos Abertos
@@ -82,7 +82,7 @@ const Comanda = () => {
   }, []);
 
   return (
-    <div className=" bg-indigo-200 flex  flex-col gap-2 justify-center items-center">
+    <div className=" bg-indigo-200 flex h-screen flex-col gap-2 justify-center items-center">
       <form className="min-h-[70%] w-full max-w-xs bg-white flex flex-col justify-center py-5 px-8 rounded-xl shadow-lg">
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas

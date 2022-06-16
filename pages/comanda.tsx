@@ -82,8 +82,8 @@ const Comanda = () => {
   }, []);
 
   return (
-    <div className=" bg-indigo-200 flex h-screen w-full flex-col gap-2 justify-center items-center">
-      <form className="min-h-[70%] h-screen w-full max-w-xs bg-white flex flex-col justify-center py-5 px-8 rounded-xl shadow-lg">
+    <div className=" bg-indigo-200 flex h-screen w-full flex-col justify-start items-center">
+      <form className="min-h-[70%] h-screen w-full max-w-xs bg-white flex flex-col py-5 px-8 rounded-xl shadow-lg">
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas
         </h1>

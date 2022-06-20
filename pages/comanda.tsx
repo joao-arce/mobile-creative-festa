@@ -1,6 +1,16 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+
+type OrderProps = {
+  id: number;
+  number: number;
+  client_name: string;
+  date: string;
+  adult_qtd: number;
+  kid_qtd: number;
+  status: string;
+  id_ticket: number;
+};
 
 // Ao carregar a tela deve consultar se o garçom
 // tem comandas abertas. Caso sim, exiber as comandas
@@ -8,38 +18,114 @@ import { useState, useEffect } from 'react';
 
 const Comanda = () => {
   const [comanda, setComanda] = useState('');
+  const [openList, setOpenList] = useState<OrderProps[]>([]);
+  const [items, setItems] = useState([]);
+  const [goToItems, setGoToItems] = useState(false);
+  const [showList, setShowList] = useState(false);
+  const [showErro, setShowErro] = useState(false);
+  const [message, setMessage] = useState('');
+
   // const [isOpenOrder, setIsOpenOrder] = useState(false);
   const [isOpenOrder, setIsOpenOrder] = useState(true);
   const router = useRouter();
 
+  const formateDateToSend = (date: string) => {
+    const [day, month, year] = date.split('-');
+
+    const result = [year, month, day].join('-');
+    return result;
+  };
+
+  const handleListItems = async (
+    e: React.FormEvent<HTMLButtonElement>,
+    id_order: number
+  ) => {
+    e.preventDefault();
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/item/${id_order}`
+    );
+
+    if (response.ok) {
+      const items = await response.json();
+      console.log('items ', items.items);
+
+      setItems(items);
+      setGoToItems(true);
+
+      let aux = JSON.stringify(items);
+      aux = aux.slice(9, aux.length - 1);
+
+      router.push({ pathname: '/andamentoPedido', query: { items: aux } });
+    } else {
+      console.log('Error', response.status);
+    }
+  };
+
+  const listOpenOrder = async () => {
+    const dateParam = formateDateToSend('12-06-2022');
+    // console.log('dateParam ', dateParam);
+    const ABERTA = 'aberta';
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/orderwithopenitems/${dateParam}`
+    );
+
+    if (response.ok) {
+      const list = await response.json();
+
+      // console.log('list ', list);
+
+      setOpenList(list.orders);
+      setShowList(true);
+    } else {
+      console.log('Error', response.status);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  };
+
   const validation = () => {
     if (+comanda === 0 || comanda.length === 0) {
-      console.log('comanda não pode ser 0 ou vazia');
       return false;
     }
 
     return true;
   };
 
-  const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleSearchOrder = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (validation()) {
-      // BUSCAR A COMANDA NO BANCO DE DADOS
-    } else {
-      console.log('validação nao passou');
-      return;
-    }
+      const dateParam = formateDateToSend('12-06-2022');
 
-    // A linha abaixo é para testar o funcionamento deve ser retirada
-    setIsOpenOrder(true);
-    // router.push('/comandaPedido');
+      const FECHADA = 'fechada';
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/notclosed/${FECHADA}/${comanda}/${dateParam}`;
+
+      // order/notclosed/:status/:number/:date
+      const response = await fetch(`${url}`);
+
+      if (response.ok) {
+        const order = await response.json();
+        console.log('order ', order);
+
+        let aux = JSON.stringify(order);
+        aux = aux.slice(9, aux.length - 1);
+        // console.log('aux ', aux);
+
+        router.push({ pathname: '/prePedido', query: { order: aux } });
+      } else {
+        console.log('Error', response.status);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setShowErro(false);
+    } else {
+      setShowErro(true);
+      setMessage('Informe o número da comanda');
+    }
   };
 
   const getOpenOrder = () => {
     // buscar comandas que possuem pedidos abertos
-    // pensar quais são os parametros necessários para a consulta
-
+    listOpenOrder();
     setIsOpenOrder(true);
   };
 
@@ -51,27 +137,17 @@ const Comanda = () => {
             Pedidos Abertos
           </h2>
 
+          {/* href="/comandaAtendido" */}
           <div className="grid grid-cols-3 gap-x-2 gap-y-2">
-            <Link href="/comandaAtendido">
-              <a className="text-gray-50 font-semibold text-center bg-red-400 hover:bg-red-600 p-y-1 rounded-xl">
-                123
-              </a>
-            </Link>
-            <Link href="/comandaAtendido">
-              <a className="text-gray-50 font-semibold text-center bg-red-400 hover:bg-red-600 p-y-1 rounded-xl">
-                980
-              </a>
-            </Link>
-            <Link href="/comandaAtendido">
-              <a className="text-gray-50 font-semibold text-center bg-red-400 hover:bg-red-600 p-y-1 rounded-xl">
-                058
-              </a>
-            </Link>
-            <Link href="/comandaAtendido">
-              <a className="text-gray-50 font-semibold text-center bg-red-400 hover:bg-red-600 p-y-1 rounded-xl">
-                144
-              </a>
-            </Link>
+            {openList.map((order) => (
+              <button
+                onClick={(e) => handleListItems(e, order.id)}
+                key={order.id}
+                className="text-gray-50 font-semibold text-center bg-red-400 hover:bg-red-600 py-1 rounded-xl"
+              >
+                {order.number}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -89,6 +165,11 @@ const Comanda = () => {
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas
         </h1>
+        {showErro && (
+          <div className="bg-red-400 mb-5 rounded-lg">
+            <div className="text-slate-50 p-3 font-medium">{message}</div>
+          </div>
+        )}
 
         {/* dados do usuário logado */}
         <div className="p-2 w-full bg-gray-100 rounded-md ">
@@ -115,7 +196,7 @@ const Comanda = () => {
 
         <div className="flex justify-around items-center my-4">
           <button
-            onClick={handleClick}
+            onClick={handleSearchOrder}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded py-2 px-4"
           >
             Buscar
@@ -126,9 +207,8 @@ const Comanda = () => {
         </div>
 
         {/* Comandas abertas */}
-        {isOpenOrder ? buildOpenOrder() : ''}
+        {showList ? buildOpenOrder() : ''}
       </form>
-      //{' '}
     </div>
   );
 };

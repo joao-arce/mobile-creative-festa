@@ -54,6 +54,10 @@ const Comanda = () => {
       setGoToItems(true);
 
       let aux = JSON.stringify(items);
+
+      console.log('COMANDA ');
+      console.log(aux);
+
       aux = aux.slice(9, aux.length - 1);
 
       router.push({ pathname: '/andamentoPedido', query: { items: aux } });
@@ -63,9 +67,9 @@ const Comanda = () => {
   };
 
   const listOpenOrder = async () => {
-    const dateParam = formateDateToSend('12-06-2022');
-    // console.log('dateParam ', dateParam);
-    const ABERTA = 'aberta';
+    // const dateParam = formateDateToSend('12-06-2022');
+    const dateParam = new Date().toISOString().slice(0, 10);
+    // const ABERTA = 'aberta';
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/orderwithopenitems/${dateParam}`
     );
@@ -95,7 +99,8 @@ const Comanda = () => {
     e.preventDefault();
 
     if (validation()) {
-      const dateParam = formateDateToSend('12-06-2022');
+      // const dateParam = formateDateToSend('12-06-2022');
+      const dateParam = new Date().toISOString().slice(0, 10);
 
       const FECHADA = 'fechada';
       const url = `${process.env.NEXT_PUBLIC_BASE_URL}/notclosed/${FECHADA}/${comanda}/${dateParam}`;
@@ -105,11 +110,17 @@ const Comanda = () => {
 
       if (response.ok) {
         const order = await response.json();
-        console.log('order ', order);
+        console.log('order ', order.order);
+        if (!order.order) {
+          console.log('Não Encontrou, exibir msg ');
+          setShowErro(true);
+          setMessage('Comanda não encontrada.');
+          return;
+        }
 
         let aux = JSON.stringify(order);
+
         aux = aux.slice(9, aux.length - 1);
-        // console.log('aux ', aux);
 
         router.push({ pathname: '/prePedido', query: { order: aux } });
       } else {

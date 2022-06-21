@@ -12,19 +12,26 @@ const PrePedido = () => {
   const [order, setOrder] = useState<OrderProps>();
   const router = useRouter();
 
-  const handleClick = (e: any) => {
+  const handlePedido = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    router.push('/pedido');
+
+    const myOrder = JSON.stringify(order);
+    // console.log('order vinda da busca ', myOrder);
+
+    router.push({ pathname: '/pedido', query: { order: myOrder } });
+    // router.push({ pathname: '/pedido' });
   };
-  const handleParcial = (e: any) => {
+  const handleParcial = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    router.push('/comandaParcial');
+
+    const myOrder = JSON.stringify(order);
+    router.push({ pathname: '/parcial', query: { order: myOrder } });
   };
 
   const loadOrder = () => {
     const { order } = router.query;
     const orderAux = order !== undefined ? JSON.parse(order.toString()) : '';
-    console.log('orderAux ', orderAux);
+    // console.log('orderAux ', orderAux);
     setOrder(orderAux);
   };
 
@@ -61,7 +68,7 @@ const PrePedido = () => {
         {/* buttons  */}
         <div className="flex justify-around items-center my-4">
           <button
-            onClick={handleClick}
+            onClick={handlePedido}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded py-2 px-4"
           >
             Lançar Pedido

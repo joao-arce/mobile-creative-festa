@@ -198,7 +198,7 @@ const Comanda = () => {
           Comanda
         </label>
         <input
-          className="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-1 px-3 mb-3 ml-2"
+          className="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-2 px-3 mb-3 ml-2"
           type="text"
           value={comanda}
           onChange={(e) => setComanda(e.target.value.replace(/\D/g, ''))}

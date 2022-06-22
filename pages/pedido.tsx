@@ -107,7 +107,7 @@ const Pedido = () => {
 
     const newsItems = formatItemsToSend();
 
-    console.log('Vamos gravar');
+    // console.log('Vamos gravar');
     // {"categories":
 
     // console.log('newsItems ', newsItems);

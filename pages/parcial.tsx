@@ -203,7 +203,7 @@ const Parcial = () => {
         <div className="p-2 w-full bg-gray-100 rounded-md mb-3">
           <div className="flex justify-end">
             <h2 className="text-gray-900 title-font font-medium">
-              R${' '}
+              Total Geral R${' '}
               {(
                 totalConsumo + (order !== undefined ? order?.total_ticket : 0)
               ).toFixed(2)}

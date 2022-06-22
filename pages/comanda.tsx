@@ -48,15 +48,15 @@ const Comanda = () => {
 
     if (response.ok) {
       const items = await response.json();
-      console.log('items ', items.items);
+      // console.log('items ', items.items);
 
       setItems(items);
       setGoToItems(true);
 
       let aux = JSON.stringify(items);
 
-      console.log('COMANDA ');
-      console.log(aux);
+      // console.log('COMANDA ');
+      // console.log(aux);
 
       aux = aux.slice(9, aux.length - 1);
 
@@ -110,9 +110,9 @@ const Comanda = () => {
 
       if (response.ok) {
         const order = await response.json();
-        console.log('order ', order.order);
+        // console.log('order ', order.order);
         if (!order.order) {
-          console.log('Não Encontrou, exibir msg ');
+          // console.log('Não Encontrou, exibir msg ');
           setShowErro(true);
           setMessage('Comanda não encontrada.');
           return;
@@ -170,9 +170,8 @@ const Comanda = () => {
   }, []);
 
   return (
-    // <div className=" bg-indigo-200 flex h-screen w-full flex-col justify-start items-center">
     <div className="flex h-screen w-full justify-center items-center">
-      <form className="min-h-[70%] h-screen w-full max-w-sm bg-white flex flex-col py-5 px-4 rounded-xl shadow-lg">
+      <form className="min-h-[70%] h-screen w-full max-w-md bg-white flex flex-col py-5 px-4 rounded-xl shadow-lg">
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas
         </h1>
@@ -198,7 +197,7 @@ const Comanda = () => {
           Comanda
         </label>
         <input
-          className="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-2 px-3 mb-3 ml-2"
+          className="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-3 px-3 mb-3 ml-2"
           type="text"
           value={comanda}
           onChange={(e) => setComanda(e.target.value.replace(/\D/g, ''))}

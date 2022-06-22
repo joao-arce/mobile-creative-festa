@@ -29,7 +29,11 @@ const AndamentoPedido = () => {
       items !== undefined ? await JSON.parse(items.toString()) : [];
     // console.log('andamento ', itemsAux);
     if (itemsAux.length > 0) setOrderNumber(itemsAux[0].order.number);
-    setItemsOrder(itemsAux);
+    // console.log('');
+    // console.log(' ITEMS DO PEDIDO ');
+    // console.log('itemsAux ', itemsAux);
+    const openItems = itemsAux.filter((elem) => elem.status === 'aberto');
+    setItemsOrder(openItems);
   };
 
   const handleAttend = async (e: React.FormEvent<HTMLButtonElement>) => {
@@ -57,6 +61,7 @@ const AndamentoPedido = () => {
       // console.log('tudo ok');
       // props.closeFechamento();
       router.push('/');
+      // router.reload();
     } else {
       console.log('Erro ', await response.json());
     }

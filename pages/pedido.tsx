@@ -1,13 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-// const products = [
-//   { id: 1, name: 'Choop', price: 2.0 },
-//   { id: 2, name: 'Heineken Lata', price: 4.0 },
-//   { id: 3, name: 'Amstel Lata', price: 4.0 },
-//   { id: 4, name: 'Antártica Lata', price: 4.0 },
-// ];
-
 type Product = {
   id: number;
   name: string;
@@ -129,7 +122,7 @@ const Pedido = () => {
 
     if (response.ok) {
       const result = await response.json();
-      console.log('result ', result);
+      // console.log('result ', result);
       // props.closeFechamento();
       router.push('/');
     } else {
@@ -147,8 +140,8 @@ const Pedido = () => {
     itemProduct: Item,
     action: 'plus' | 'minus'
   ) => {
-    console.log('INICIAL ');
-    console.log(itemsProduct);
+    // console.log('INICIAL ');
+    // console.log(itemsProduct);
 
     let newQuantity = itemProduct.quantity;
     if (action === 'plus') {
@@ -167,8 +160,8 @@ const Pedido = () => {
     );
     // console.log({ ...itemProduct, quantity: itemProduct.quantity + 1 });
     // setItemsProduct( { ...itemProduct, quantity: itemProduct.quantity + 1 })
-    console.log('Adicionou ');
-    console.log('newQuantity ', newQuantity);
+    // console.log('Adicionou ');
+    // console.log('newQuantity ', newQuantity);
     setItemsProduct(updateItems);
   };
 
@@ -193,7 +186,7 @@ const Pedido = () => {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8"
+                      className="h-12 w-12"
                       viewBox="0 0 20 20"
                       fill="red"
                     >
@@ -211,7 +204,7 @@ const Pedido = () => {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8"
+                      className="h-12 w-12"
                       viewBox="0 0 20 20"
                       fill="green"
                     >
@@ -252,11 +245,11 @@ const Pedido = () => {
   ) => {
     e.preventDefault();
 
-    console.log('handleAddItem ', idOrder);
-    console.log('handleAddItem ', orderNumber);
-    console.log('handleAddItem ', product);
+    // console.log('handleAddItem ', idOrder);
+    // console.log('handleAddItem ', orderNumber);
+    // console.log('handleAddItem ', product);
 
-    console.log('chegou aqui');
+    // console.log('chegou aqui');
 
     prepareItemOrder(product, 1);
 
@@ -326,7 +319,7 @@ const Pedido = () => {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-8 w-10"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >

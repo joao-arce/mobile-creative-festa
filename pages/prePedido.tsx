@@ -24,8 +24,9 @@ const PrePedido = () => {
   const handleParcial = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const myOrder = JSON.stringify(order);
-    router.push({ pathname: '/parcial', query: { order: myOrder } });
+    // const myOrder = JSON.stringify(order);
+    const orderNumber = order?.number;
+    router.push({ pathname: '/parcial', query: { number: orderNumber } });
   };
 
   const loadOrder = () => {

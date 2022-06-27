@@ -1,12 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import AndamentoPedido from './andamentoPedido';
 import Comanda from './comanda';
-import Parcial from './parcial';
-import Pedido from './pedido';
-import PrePedido from './prePedido';
-import Rascunho from './rascunho';
 
 const Home: NextPage = () => {
   return (
@@ -18,11 +13,6 @@ const Home: NextPage = () => {
       </Head>
       <main className={styles.main}>
         <Comanda />
-        {/* <AndamentoPedido /> */}
-        {/* <Rascunho /> */}
-        {/* <PrePedido /> */}
-        {/* <Pedido /> */}
-        {/* <Parcial /> */}
       </main>
     </div>
   );

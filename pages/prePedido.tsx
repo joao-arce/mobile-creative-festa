@@ -12,27 +12,25 @@ const PrePedido = () => {
   const [order, setOrder] = useState<OrderProps>();
   const router = useRouter();
 
-  const handlePedido = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handlePedido = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const myOrder = JSON.stringify(order);
-    // console.log('order vinda da busca ', myOrder);
 
     router.push({ pathname: '/pedido', query: { order: myOrder } });
-    // router.push({ pathname: '/pedido' });
   };
-  const handleParcial = (e: React.FormEvent<HTMLButtonElement>) => {
+
+  const handleParcial = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    // const myOrder = JSON.stringify(order);
     const orderNumber = order?.number;
     router.push({ pathname: '/parcial', query: { number: orderNumber } });
   };
 
   const loadOrder = () => {
     const { order } = router.query;
+
     const orderAux = order !== undefined ? JSON.parse(order.toString()) : '';
-    // console.log('orderAux ', orderAux);
     setOrder(orderAux);
   };
 

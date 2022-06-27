@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { getParcial } from '../libs/order';
+import { ICompletedOrder } from '../types/order';
 
 type Product = {
   name: string;
@@ -26,20 +28,17 @@ const Parcial = () => {
   const [showParcial, setShowParcial] = useState(false);
   const [order, setOrder] = useState<OrderData>();
   const [items, setItems] = useState<Item[]>([]);
-  let totalConsumo = 0;
 
-  // const order: OrderData
+  let totalConsumo = 0;
 
   const router = useRouter();
 
-  const buildPartialScreen = (order: any) => {
+  const buildPartialScreen = (order: ICompletedOrder) => {
     buildPartialOrder(order);
-    const auxItems = order.items;
-    // console.log('auxItems ', auxItems);
-    builPartialConsumo(auxItems);
+    builPartialConsumo(order);
   };
 
-  const buildPartialOrder = (order: any) => {
+  const buildPartialOrder = (order: ICompletedOrder) => {
     const { number, adult_qtd, kid_qtd } = order;
     const { adult_price, kid_price } = order.ticket;
 
@@ -56,10 +55,10 @@ const Parcial = () => {
     setOrder(objOrder);
   };
 
-  const sumaryItem = (consumo: Item[]) => {};
+  const builPartialConsumo = (order: ICompletedOrder) => {
+    const { items } = order;
 
-  const builPartialConsumo = (items: any) => {
-    const result = items.map((item: { quantity: any; product: any }) => {
+    const result = items.map((item) => {
       const objItem: Item = {
         quantity: item.quantity,
         product_name: item.product.name,
@@ -68,7 +67,6 @@ const Parcial = () => {
       return objItem;
     });
     setItems(result);
-    // console.log('Items aqui ', items);
   };
 
   const getOrder = () => {
@@ -80,41 +78,19 @@ const Parcial = () => {
   };
 
   const loadParcial = async () => {
-    const dateParam = new Date().toISOString().slice(0, 10);
     const auxNumber = getOrder();
 
-    // console.log('Carregando parcial');
-    // console.log('orderNumber ', auxNumber);
-    // console.log('dateParam ', dateParam);
+    const response = await getParcial(auxNumber);
+    const list = await response.json();
 
-    // order/parcial/:number/:date
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/order/parcial/${auxNumber}/${dateParam}`
-    );
+    const auxOrder: ICompletedOrder = list.order;
 
-    if (response.ok) {
-      const list = await response.json();
+    // console.log('PARCIAL ', auxOrder);
 
-      // console.log('Vamos ver ');
-      // console.log('list ', list);
-
-      const auxOrder = list.order;
-      buildPartialScreen(auxOrder);
-      const auxTicket = list.order.ticket;
-      // console.log('auxOrder ', auxOrder);
-      // console.log('auxItems ', auxItems);
-      // console.log('auxTicket ', auxTicket);
-
-      // setOpenList(list.orders);
-      // setShowList(true);
-    } else {
-      console.log('Error', response.status);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    buildPartialScreen(auxOrder);
   };
 
   useEffect(() => {
-    // setShowParcial(false);
     loadParcial();
     setShowParcial(true);
   }, []);
@@ -122,7 +98,6 @@ const Parcial = () => {
   return (
     <div className="flex h-screen w-full justify-center items-center">
       <div className="min-h-[70%] h-screen w-full max-w-sm bg-white flex flex-col py-5 px-4 rounded-xl shadow-lg">
-        {/* ****** */}
         {/* Cabeçalho  */}
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas
@@ -138,7 +113,6 @@ const Parcial = () => {
         </div>
 
         {/* Dados da comanda */}
-
         <div className="p-2 w-full bg-gray-100 rounded-md mt-2">
           <div>
             <h2 className="text-gray-900 title-font font-medium">
@@ -160,10 +134,10 @@ const Parcial = () => {
                   : 0}{' '}
               </p>
             </div>
-            <div className="flex justify-end">
-              <h2 className="text-gray-900 title-font  font-medium">
-                total R$ {order?.total_ticket?.toFixed(2)}
-              </h2>
+
+            <div className="flex justify-end gap-5 text-gray-900 title-font  font-medium">
+              <h2 className="">Total R$</h2>
+              <h2>{order?.total_ticket?.toFixed(2)}</h2>
             </div>
           </div>
         </div>
@@ -178,32 +152,32 @@ const Parcial = () => {
             {items.map((element, index) => {
               totalConsumo += element.product_price * element.quantity;
               return (
-                <div key={index} className="flex justify-between">
-                  <p className="text-gray-500">{element.product_name} </p>
-                  <p className="text-gray-500">{element.quantity} </p>
-                  <p className="text-gray-500">
+                // <div key={index} className="flex justify-between text-gray-500">
+                <div key={index} className="flex text-gray-500">
+                  <p className="basis-2/5">{element.product_name} </p>
+                  <p className="basis-1/5">{element.quantity} </p>
+                  <p className="basis-1/5">
                     {element.product_price.toFixed(2)}{' '}
                   </p>
 
-                  <p className="text-gray-500 self-end">
+                  <p className="basis-1/5 text-end">
                     {(element.product_price * element.quantity).toFixed(2)}{' '}
                   </p>
                 </div>
               );
             })}
-            <div className="flex justify-end">
-              <h2 className="text-gray-900 title-font  font-medium">
-                total R$ {totalConsumo.toFixed(2)}
-              </h2>
+            <div className="flex justify-end gap-5 text-gray-900 title-font  font-medium">
+              <h2 className="">Total R$</h2>
+              <h2>{totalConsumo.toFixed(2)}</h2>
             </div>
           </div>
         </div>
 
         {/* Total Geral da conta */}
-        <div className="p-2 w-full bg-gray-100 rounded-md mb-3">
-          <div className="flex justify-end">
-            <h2 className="text-gray-900 title-font font-medium">
-              Total Geral R${' '}
+        <div className="p-2 w-full bg-gray-100 rounded-md mt-2">
+          <div className="flex justify-end gap-5 text-gray-900 title-font font-medium">
+            <h2 className="">Total Geral R$</h2>
+            <h2>
               {(
                 totalConsumo + (order !== undefined ? order?.total_ticket : 0)
               ).toFixed(2)}
@@ -214,7 +188,7 @@ const Parcial = () => {
         {/* Bottons */}
         <div className="w-full flex justify-center gap-14 pt-5 ">
           <button
-            onClick={(e) => router.push('/')}
+            onClick={(e) => router.back()}
             className="bg-zinc-500 hover:bg-zinc-700 text-white font-normal py-2 px-4 rounded"
           >
             Voltar

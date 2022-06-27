@@ -1,16 +1,9 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-type OrderProps = {
-  id: number;
-  number: number;
-  client_name: string;
-  date: string;
-  adult_qtd: number;
-  kid_qtd: number;
-  status: string;
-  id_ticket: number;
-};
+import { IOrder } from '../types/order';
+import { listOpenOrder, searchOrder } from '../libs/order';
+import { listItems } from '../libs/item';
 
 // Ao carregar a tela deve consultar se o garçom
 // tem comandas abertas. Caso sim, exiber as comandas
@@ -18,73 +11,35 @@ type OrderProps = {
 
 const Comanda = () => {
   const [comanda, setComanda] = useState('');
-  const [openList, setOpenList] = useState<OrderProps[]>([]);
-  const [items, setItems] = useState([]);
-  const [goToItems, setGoToItems] = useState(false);
+  const [openList, setOpenList] = useState<IOrder[]>([]);
   const [showList, setShowList] = useState(false);
   const [showErro, setShowErro] = useState(false);
   const [message, setMessage] = useState('');
 
-  // const [isOpenOrder, setIsOpenOrder] = useState(false);
-  const [isOpenOrder, setIsOpenOrder] = useState(true);
   const router = useRouter();
 
-  const formateDateToSend = (date: string) => {
-    const [day, month, year] = date.split('-');
-
-    const result = [year, month, day].join('-');
-    return result;
-  };
-
-  const handleListItems = async (
-    e: React.FormEvent<HTMLButtonElement>,
-    id_order: number
-  ) => {
+  const handleListItems = async (e: React.SyntheticEvent, id_order: number) => {
     e.preventDefault();
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/item/${id_order}`
-    );
+    const items = await listItems(id_order);
 
-    if (response.ok) {
-      const items = await response.json();
-      // console.log('items ', items.items);
+    // setItems(items);
+    // setGoToItems(true);
 
-      setItems(items);
-      setGoToItems(true);
+    let aux = JSON.stringify(items);
 
-      let aux = JSON.stringify(items);
+    aux = aux.slice(9, aux.length - 1);
 
-      // console.log('COMANDA ');
-      // console.log(aux);
-
-      aux = aux.slice(9, aux.length - 1);
-
-      router.push({ pathname: '/andamentoPedido', query: { items: aux } });
-    } else {
-      console.log('Error', response.status);
-    }
+    router.push({ pathname: '/andamentoPedido', query: { items: aux } });
   };
 
-  const listOpenOrder = async () => {
-    // const dateParam = formateDateToSend('12-06-2022');
-    const dateParam = new Date().toISOString().slice(0, 10);
-    // const ABERTA = 'aberta';
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/orderwithopenitems/${dateParam}`
-    );
+  const listOpenOrderOld = async () => {
+    const orders = await listOpenOrder();
 
-    if (response.ok) {
-      const list = await response.json();
+    // console.log('orders open ', orders);
 
-      // console.log('list ', list);
-
-      setOpenList(list.orders);
-      setShowList(true);
-    } else {
-      console.log('Error', response.status);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    setOpenList(orders);
+    setShowList(true);
   };
 
   const validation = () => {
@@ -95,38 +50,22 @@ const Comanda = () => {
     return true;
   };
 
-  const handleSearchOrder = async (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleSearchOrder = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (validation()) {
-      // const dateParam = formateDateToSend('12-06-2022');
-      const dateParam = new Date().toISOString().slice(0, 10);
+      const response = await searchOrder(parseInt(comanda));
+      const order = response.order;
 
-      const FECHADA = 'fechada';
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/notclosed/${FECHADA}/${comanda}/${dateParam}`;
-
-      // order/notclosed/:status/:number/:date
-      const response = await fetch(`${url}`);
-
-      if (response.ok) {
-        const order = await response.json();
-        // console.log('order ', order.order);
-        if (!order.order) {
-          // console.log('Não Encontrou, exibir msg ');
-          setShowErro(true);
-          setMessage('Comanda não encontrada.');
-          return;
-        }
-
-        let aux = JSON.stringify(order);
-
-        aux = aux.slice(9, aux.length - 1);
-
+      if (order !== null) {
+        const aux = JSON.stringify(order);
         router.push({ pathname: '/prePedido', query: { order: aux } });
       } else {
-        console.log('Error', response.status);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        setShowErro(true);
+        setMessage('Comanda não encontrada.');
+        return;
       }
+
       setShowErro(false);
     } else {
       setShowErro(true);
@@ -136,8 +75,7 @@ const Comanda = () => {
 
   const getOpenOrder = () => {
     // buscar comandas que possuem pedidos abertos
-    listOpenOrder();
-    setIsOpenOrder(true);
+    listOpenOrderOld();
   };
 
   const buildOpenOrder = () => {
@@ -224,27 +162,3 @@ const Comanda = () => {
 };
 
 export default Comanda;
-
-// const router = useRouter();
-
-// const handleClick = () => {
-//   router.push('/pedidoPage');
-// };
-
-// <div className="container bg-gray-100 rounded-xl px-5 py-10">
-//       <h2 className="font-bold">James</h2>
-//       <label className="label">
-//         <span className="label-text">Comanda</span>
-//       </label>
-//       <input
-//         type="text"
-//         placeholder="Número"
-//         className="input input-bordered input-primary max-w-[50%]"
-//       />
-//       <button
-//         onClick={handleClick}
-//         className="btn btn-primary rounded-full ml-5"
-//       >
-//         Buscar
-//       </button>
-//     </div>

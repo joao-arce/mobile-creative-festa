@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { attendItems } from '../libs/item';
 
 type Product = {
   name: string;
@@ -7,6 +8,7 @@ type Product = {
 type Order = {
   number: number;
 };
+
 type ItemOrder = {
   id: number;
   id_order: number;
@@ -27,44 +29,21 @@ const AndamentoPedido = () => {
     const { items } = router.query;
     const itemsAux: ItemOrder[] =
       items !== undefined ? await JSON.parse(items.toString()) : [];
-    // console.log('andamento ', itemsAux);
+
     if (itemsAux.length > 0) setOrderNumber(itemsAux[0].order.number);
-    // console.log('');
-    // console.log(' ITEMS DO PEDIDO ');
-    // console.log('itemsAux ', itemsAux);
+
     const openItems = itemsAux.filter((elem) => elem.status === 'aberto');
     setItemsOrder(openItems);
   };
 
-  const handleAttend = async (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleAttend = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const id_order = itemsOrder[0].id_order;
-    const newStatus = {
-      status: 'atendido',
-    };
 
-    const response = await fetch(
-      // item/updateMany
-      `${process.env.NEXT_PUBLIC_BASE_URL}/item/updateMany/${id_order}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify(newStatus),
-      }
-    );
+    const response = await attendItems(id_order);
 
-    if (response.ok) {
-      const order = await response.json();
-      // console.log('tudo ok');
-      // props.closeFechamento();
-      router.push('/');
-      // router.reload();
-    } else {
-      console.log('Erro ', await response.json());
-    }
+    router.push('/');
   };
 
   useEffect(() => {
@@ -76,8 +55,6 @@ const AndamentoPedido = () => {
   return (
     <div className="flex h-screen w-full justify-center items-center">
       <div className="min-h-[70%] h-screen w-full max-w-sm bg-white flex flex-col py-5 px-4 rounded-xl shadow-lg">
-        {/* ****** */}
-
         <h1 className="text-center text-2xl text-blue-700 font-bold mb-8 ">
           Creative Festas
         </h1>

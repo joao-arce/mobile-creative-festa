@@ -42,14 +42,17 @@ const Parcial = () => {
     const { number, adult_qtd, kid_qtd } = order;
     const { adult_price, kid_price } = order.ticket;
 
-    const total = +adult_qtd * +adult_price + +kid_price * +kid_qtd;
+    const adult_price_aux = adult_price === undefined ? 0 : adult_price;
+    const kid_price_aux = kid_price === undefined ? 0 : kid_price;
+
+    const total = +adult_qtd * +adult_price_aux + +kid_price_aux * +kid_qtd;
 
     const objOrder: OrderData = {
       number: number,
       adult_qtd: adult_qtd,
       kid_qtd: kid_qtd,
-      adult_price: adult_price,
-      kid_price: kid_price,
+      adult_price: adult_price_aux,
+      kid_price: kid_price_aux,
       total_ticket: total,
     };
     setOrder(objOrder);

@@ -15,6 +15,8 @@ const PrePedido = () => {
   const handlePedido = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
+    console.log('order ', order);
+
     const myOrder = JSON.stringify(order);
 
     router.push({ pathname: '/pedido', query: { order: myOrder } });
@@ -24,11 +26,14 @@ const PrePedido = () => {
     e.preventDefault();
 
     const orderNumber = order?.number;
+
     router.push({ pathname: '/parcial', query: { number: orderNumber } });
   };
 
   const loadOrder = () => {
     const { order } = router.query;
+
+    console.log('loadOrder ', order);
 
     const orderAux = order !== undefined ? JSON.parse(order.toString()) : '';
     setOrder(orderAux);

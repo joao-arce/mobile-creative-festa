@@ -20,9 +20,14 @@ const Pedido = ({ products }: Props) => {
 
   const router = useRouter();
 
-  const getOrder = () => {
+  const wrapperGetOrder = async () => {
+    await getOrder();
+  };
+
+  const getOrder = async () => {
     const { order } = router.query;
-    const myOrder = order !== undefined ? JSON.parse(order?.toString()) : {};
+    const myOrder =
+      order !== undefined ? await JSON.parse(order?.toString()) : {};
 
     // console.log('myOrder ', myOrder);
     setIdOrder(myOrder.id);
@@ -54,7 +59,7 @@ const Pedido = ({ products }: Props) => {
   };
 
   useEffect(() => {
-    getOrder();
+    wrapperGetOrder();
   }, []);
 
   return (

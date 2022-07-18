@@ -10,6 +10,7 @@ export type IOrder = {
   kid_qtd: number;
   status: string;
   id_ticket: number;
+  id_cashier: number;
 };
 
 export type ICompletedOrder = {
@@ -21,6 +22,7 @@ export type ICompletedOrder = {
   kid_qtd: number;
   status: string;
   id_ticket: number;
+  id_cashier: number;
   items: IItem[];
   ticket: ITicket;
 };
